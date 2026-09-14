@@ -1,0 +1,17 @@
+[project]
+name = "ai-engineering"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=6.1.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.7",
+    "torch>=2.14.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "projects/pilot",
+]
