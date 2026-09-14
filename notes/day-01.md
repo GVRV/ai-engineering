@@ -33,4 +33,4 @@ where w = weights, b = biases, f = a function like ReLU or Sigmoid.
 
 - A tool-using model is different from chat because: it can interact with tools which are more suitable for certain tasks (like accurate calculations, up-to-date information available on the internet or syntactically valid code). This allows the model to augment its corpus of knowledge with complementary skills that lead to better answers or capabilities.
 
-- Prompt injection is (one sentence from the later chapter titles is enough): an LLM security issue where malicious actors might hide/disguise prompts to divert the model from its original task. For example, the user might get the model to look-up a webpage where there is a message in white text (not visible to the human eye) asking the model to give some wrong answer.ur
+- Prompt injection is (one sentence from the later chapter titles is enough): an LLM security issue where malicious actors might hide/disguise prompts to divert the model from its original task. For example, the user might get the model to look-up a webpage where there is a message in white text (not visible to the human eye) asking the model to give some wrong answer.
