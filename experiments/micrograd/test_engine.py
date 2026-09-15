@@ -114,3 +114,10 @@ def test_modular_tanh():
     assert_grad(w1.grad, 1.0)
     assert_grad(x2.grad, 0.5)
     assert_grad(w2.grad, 0)
+
+def test_pow_accumulates():
+    a = Value(2.0)
+    b = a**2 + a**2
+    b.backward()
+    # d/da (a^2 + a^2) = 4a = 8
+    assert abs(a.grad - 8.0) < 1e-4

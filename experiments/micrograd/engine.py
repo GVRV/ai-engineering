@@ -67,7 +67,7 @@ class Value:
         )
 
         def _backward():
-            self.grad = other * (self.data**(other-1)) * out.grad
+            self.grad += other * (self.data**(other-1)) * out.grad
         out._backward = _backward
 
         return out

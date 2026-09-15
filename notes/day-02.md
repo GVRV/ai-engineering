@@ -25,6 +25,12 @@ The chain rule on a graph is: df/da = df/db * db/da i.e. if we know how a variab
 
 Why we += grads (the a+a bug): This was a python object reference bug. If the same object is memory is referenced by both self and other in certain operations, its grad value gets overwritten instead of being cumulatively affected.
 
+GROK CORRECTION: This is not true, it's a math bug as well considering chain rule that affects multiple intermediary variables.
+
+df/da = df/db * db/da + df/dc * dc/da
+
+All intermediary variables should be accounted for in the cumulative chain rule for the final gradient to be correct. This is why we're adding the gradients.
+
 What .backward() does in 3 steps:
 1.Start with a root node where the gradient is 1 and then immediately calculate the gradients of its previous operation neighbours over a single mathematical (or logical unit of a number of mathematical) operation
 2. Repeat this process with the neighbours of neighbours using topological sorting applying the chain rule as we already know the gradient from step 1
