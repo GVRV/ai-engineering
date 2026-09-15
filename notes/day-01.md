@@ -34,3 +34,21 @@ where w = weights, b = biases, f = a function like ReLU or Sigmoid.
 - A tool-using model is different from chat because: it can interact with tools which are more suitable for certain tasks (like accurate calculations, up-to-date information available on the internet or syntactically valid code). This allows the model to augment its corpus of knowledge with complementary skills that lead to better answers or capabilities.
 
 - Prompt injection is (one sentence from the later chapter titles is enough): an LLM security issue where malicious actors might hide/disguise prompts to divert the model from its original task. For example, the user might get the model to look-up a webpage where there is a message in white text (not visible to the human eye) asking the model to give some wrong answer.
+
+### 3Blue1Brown: [Gradient descent, how neural networks learn | Deep Learning Chapter 2](https://www.youtube.com/watch?v=IHZwWFHWa-w)
+
+- What is the cost/loss in one sentence?
+
+A loss or cost is a numerical value which can tell us how close our neural network is to fitting the training data. The lower the loss, the closer our neural network is to making completely accurate predictions.
+
+- Why do we step opposite the gradient?
+
+Because we want to minimise loss. We want to nudge the parameters in a direction where loss decreases so that our predictions are more accurate.
+
+- What does “the gradient is a 13,000-dimensional vector” mean in the digit net?
+
+It means that the gradient is dependent on 13000 parameters where each parameter can slightly increase or decrease the value. So to understand the exact direction in which the value will increase or decrease, we have to find the 13000 dimensional vector where the loss is most going to increase/decrease.
+
+- What is the difference between a local dip and “the network learned the digit”?
+
+This is why we start gradient descent from multiple random places because there can be multiple spots in the loss function curve where we reach a local minima i.e. there is no slope towards which we can move from that particular point to minimise the loss. However, if we start out from many different locations, each of those runs can converge towards their own local minimas and there's a high probability of finding at least one local minima which might be the global minimum (or close to it).
