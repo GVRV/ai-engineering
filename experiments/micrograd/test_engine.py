@@ -77,8 +77,11 @@ def test_gradient_duplicates():
     a = Value(2.0)
     b = Value(4.0)
     c = a / b
+    c.backward()
 
     assert_grad(c.data, 0.5)
+    assert_grad(a.grad, 0.25)
+    assert_grad(b.grad, -0.125)
 
 def test_modular_tanh():
     x1 = Value(2.0)
