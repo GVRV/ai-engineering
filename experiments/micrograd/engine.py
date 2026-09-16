@@ -36,6 +36,9 @@ class Value:
     def __sub__(self, other):
         return self + (-other)
 
+    def __rsub__(self, other):
+        return (-self) + other
+
     def __mul__(self, other):
         other = other if isinstance(other, Value) else Value(other)
         out = Value(
