@@ -9,3 +9,7 @@ My N+1 NLL: 2.4544 (just adding +1 for smoothing didn't move the needle much, if
 Why we add 1: Because the log of 0 is -INF, a single prediction that didn't occur in our distribution might result in our loss being infinite. To prevent this from happening, we smooth out the distribution by adding a constant count to all possible predictions.
 20 sample names: cexze.momasurailezitynn.konimittain.llayn.ka.da.staiyaubrtthrigotai.moliellavo.ke.teda.ka.emimmsade.enkaviyny.ftlspihinivenvorhlasu.dsor.br.jol.pen.aisan.ja.
 What I still don't trust: I don't get minimizing the log likelihood because to do that wouldn't we just go with the highest probability next token given a character always?
+
+Train/Eval: change probabilities (`P`) look-up so that real bigrams have high probability (low NLL)
+
+Generate: draw from finished probabilities look-up (`P`). Argmax != training.
