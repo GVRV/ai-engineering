@@ -13,7 +13,7 @@ initial loss for random net: 3.819756269454956
 initial loss: 3.8231
 final loss (step N): 2.4807
 count-model NLL to beat: 2.4544
-why we shouldn't beat it by a lot: then we overfit the model to our data instead of remaining general.
+why we shouldn't beat it by a lot: because the count table if the MLE for this solution and our gradient descent solution won't get there with limited training runs (but it will get extremely close to it).
 regularisation is the neural twin of: smoothing the counts
 what I still don't trust: why pytorch got so popular considering the API is horrendous. One hot seems like a very inefficient mechanism to encode integers but I guess it doesn't matter because modern neural nets are quite big (even converting integers to binary and then using those 1s as input might be better?) A lot of hyperparameters were just guessed (eg: how many iterations of training, the learning rate, the regularization parameters, etc) - is there a science to it or you just go with trial and error?
 
