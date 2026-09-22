@@ -12,7 +12,7 @@ C is: An embedding table. Instead of using a unique identifier for each differen
 
 C[X] shape: if C is [27, 2] and X is [32, 3], then C[X] is [32, 3, 2]
 
-why view / concat: Because we have a batch size of 3, and because we're using 2 dimensions to encode each character, we will need to use 6 (3 * 2) numbers as input to our model. Using `view` or `concat` are different ways to rearrage the data in the tensor so that it aligns with how we can easily use it to provide input to the hidden layer.
+why view / concat: Because we have a context length of 3, and because we're using 2 dimensions to encode each character, we will need to use 6 (3 * 2) numbers as input to our model. Using `view` or `concat` are different ways to rearrage the data in the tensor so that it aligns with how we can easily use it to provide input to the hidden layer.
 
 param count: 3481
 overfit-32 final loss: 0.2538

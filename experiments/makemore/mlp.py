@@ -15,7 +15,7 @@ i_to_ch = {i+1: s for i,s in enumerate(chars)}
 i_to_ch[0] = '.'
 
 # Let's start with just the first eight
-words = WORDS
+words = WORDS[:5]
 
 block_size = 3 # Context length: how many chars do we look at before predicting the next char
 
@@ -57,8 +57,8 @@ for p in parameters:
     num_params += p.numel()
 print(f'{num_params=}')
 
-NUM_TRAINING_RUNS = 50000
-LEARNING_RATE = 0.09
+NUM_TRAINING_RUNS = 500000
+LEARNING_RATE = 0.01
 MINI_BATCH_SIZE = 32
 for _ in range(NUM_TRAINING_RUNS):
     # MINIBATCH CONSTRUCT
