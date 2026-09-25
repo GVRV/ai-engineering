@@ -202,7 +202,7 @@ for i in range(20):
     while True:
         input_encoded = embedding_table[ix].view(1, -1)
         hidden_layer_preact = input_encoded @ weights_1
-        hidden_layer_bn = (hidden_layer_preact - bn_mean_running) / bn_std_running
+        hidden_layer_bn = (hidden_layer_preact - bn_mean_running) / (bn_std_running + + 0.00001)
         hidden_layer_bn_layer = (batch_norm_gain * hidden_layer_bn) + batch_norm_biases
         hidden_layer = torch.tanh(hidden_layer_bn_layer)
         logits = hidden_layer @ weights_2 + biases_2
