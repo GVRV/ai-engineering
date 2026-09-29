@@ -81,7 +81,7 @@ class Head(nn.Module):
         q = self.query(x) # B, T, C
 
         # compute attention scores ("affinities")
-        wei = q @ k.transpose(-2, -1) * C**-0.5 # B, T, C @ B, C, T -> B, T, T
+        wei = q @ k.transpose(-2, -1) * k.shape[-1]**-0.5 # B, T, C @ B, C, T -> B, T, T
         # decoder block
         wei = wei.masked_fill(self.tril[:T, :T] == 0, float('-inf')) # B, T, T
         wei = F.softmax(wei, dim=-1) # B, T, T
@@ -89,6 +89,18 @@ class Head(nn.Module):
         v = self.value(x) # B, T, C
         out = wei @ v # B, T, T @ B, T, C -> B, T, C
         return out
+
+
+class MultiHeadAttention(nn.Module):
+    """ multiple heads of self-attention in parallel
+    """
+    def __init__(self, num_heads, head_size):
+        super().__init__()
+        self.heads = nn.ModuleList([Head(head_size) for _ in range(num_heads)])
+
+    def forward(self, x):
+        # concatenate head outputs in the Channel dimension
+        return torch.cat([h(x) for h in self.heads], dim=-1)
 
 
 class BigramLanguageModel(nn.Module):
@@ -101,7 +113,7 @@ class BigramLanguageModel(nn.Module):
         # We also want to encode where in the block size the input is (is it
         # the first character? in the middle? etc?)
         self.position_embedding_table = nn.Embedding(block_size, NUM_EMBEDDING)
-        self.sa_head = Head(NUM_EMBEDDING)
+        self.sa_heads = MultiHeadAttention(4, NUM_EMBEDDING//4)
         self.lm_head = nn.Linear(NUM_EMBEDDING, VOCAB_SIZE)
 
     def forward(self, idx, targets=None):
@@ -111,7 +123,7 @@ class BigramLanguageModel(nn.Module):
         token_embedding = self.token_embedding_table(idx) # (Batch,Time,Channel)
         position_embedding = self.position_embedding_table(torch.arange(T)) # (T, C)
         x = token_embedding + position_embedding # Broadcasting: B, T, C
-        x = self.sa_head(x) # B, T, C
+        x = self.sa_heads(x) # B, T, C
         logits = self.lm_head(x) # (Batch, Time, Vocab_Size)
 
         # If we're doing a forward pass without any target predictions

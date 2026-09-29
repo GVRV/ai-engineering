@@ -77,6 +77,10 @@ Val loss: 2.4215
 Yesterday's val (token+position baseline): ~2.51
 Did this beat it: yes.
 
+With multiple heads (4 heads of size 8 each):
+Train loss: 2.2712
+Val loss: 2.2918
+
 What "self-attention" means here:
 Each position attends to other positions in the same sequence,
 including itself. Nobody from another batch item is visible.
