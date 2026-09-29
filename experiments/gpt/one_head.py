@@ -65,6 +65,32 @@ assert yb.shape == torch.Size([batch_size, block_size])
 #         target = yb[b, t]
 #         print(f"when input is {context.tolist()} the target is: {target}")
 
+class Head(nn.Module):
+    """ one head of self-attention """
+    def __init__(self, head_size):
+        super().__init__()
+
+        self.key = nn.Linear(NUM_EMBEDDING, head_size, bias=False)
+        self.query = nn.Linear(NUM_EMBEDDING, head_size, bias=False)
+        self.value = nn.Linear(NUM_EMBEDDING, head_size, bias=False)
+        self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
+
+    def forward(self, x):
+        B,T,C = x.shape
+        k = self.key(x) # B, T, C
+        q = self.query(x) # B, T, C
+
+        # compute attention scores ("affinities")
+        wei = q @ k.transpose(-2, -1) * C**-0.5 # B, T, C @ B, C, T -> B, T, T
+        # decoder block
+        wei = wei.masked_fill(self.tril[:T, :T] == 0, float('-inf')) # B, T, T
+        wei = F.softmax(wei, dim=-1) # B, T, T
+
+        v = self.value(x) # B, T, C
+        out = wei @ v # B, T, T @ B, T, C -> B, T, C
+        return out
+
+
 class BigramLanguageModel(nn.Module):
 
     def __init__(self):
@@ -75,6 +101,7 @@ class BigramLanguageModel(nn.Module):
         # We also want to encode where in the block size the input is (is it
         # the first character? in the middle? etc?)
         self.position_embedding_table = nn.Embedding(block_size, NUM_EMBEDDING)
+        self.sa_head = Head(NUM_EMBEDDING)
         self.lm_head = nn.Linear(NUM_EMBEDDING, VOCAB_SIZE)
 
     def forward(self, idx, targets=None):
@@ -84,6 +111,7 @@ class BigramLanguageModel(nn.Module):
         token_embedding = self.token_embedding_table(idx) # (Batch,Time,Channel)
         position_embedding = self.position_embedding_table(torch.arange(T)) # (T, C)
         x = token_embedding + position_embedding # Broadcasting: B, T, C
+        x = self.sa_head(x) # B, T, C
         logits = self.lm_head(x) # (Batch, Time, Vocab_Size)
 
         # If we're doing a forward pass without any target predictions
@@ -150,15 +178,15 @@ def estimate_loss():
 idx = torch.zeros((1, 1), dtype=torch.long)
 
 # Sample from the model
-def get_prediction(size=100):
+def get_prediction(size=200):
     predictions = m.generate(idx, max_new_tokens=size) # (B, T)
     prediction = predictions[0] # (T)
     print(decode(prediction.tolist()))
 
 # Training loop
 # print(list(m.parameters()))
-optimizer = torch.optim.AdamW(m.parameters(), lr=1e-2)
-for steps in range(10000):
+optimizer = torch.optim.AdamW(m.parameters(), lr=1e-3)
+for steps in range(5000):
     xb, yb = get_batch('train')
 
     logits, loss = m(xb, yb)
@@ -170,4 +198,4 @@ for steps in range(10000):
         print(estimate_loss())
 
 print(estimate_loss())
-print(get_prediction())
+get_prediction()

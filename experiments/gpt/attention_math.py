@@ -22,6 +22,7 @@
 
 import torch
 from torch.nn import functional as F
+from torch import nn
 torch.manual_seed(1337)
 
 B, T, C = 4, 8, 2 # batch, time, channels
@@ -117,3 +118,47 @@ wei = F.softmax(wei, dim=-1) # Why not use dim=1?
 #         [0.1250, 0.1250, 0.1250, 0.1250, 0.1250, 0.1250, 0.1250, 0.1250]])
 xbow3 = wei @ x
 print(torch.allclose(xbow, xbow3))
+
+# Version 4: self-attention!
+torch.manual_seed(1337)
+B,T,C = 4, 8, 32 # batch, time, channels
+x = torch.randn(B,T,C)
+
+# a single Head perform self-attention
+head_size = 16 # hyperparameter
+# Key is used to inform other tokens this is what I contain
+key = nn.Linear(C, head_size, bias=False) # C, H
+# Query is used. to inform other tokens what I'm looking for
+query = nn.Linear(C, head_size, bias=False) # C, H
+
+k = key(x) # B, T, C @ C, head_size -> B, T, H (head_size)
+q = query(x) # B, T, C @ C, H -> B, T, H
+
+# That's why a matric multiply of Key & Query will give higher
+# affinities to tokens which are what other tokens are looking for
+# Eg: a vowel is looking for certain consonants in positions before it
+# Therefore, instead of starting weights with equal 0s, we now start
+# with certain affinities we got from keys and queries
+wei = q @ k.transpose(-2, -1) # (B, T, H) * (B, H, T) -> (B, T, T)
+
+# Considering k and q are fairly gaussian distributions with variance = 1
+# when we multiply them, the wei variance is roughly equal to the head size H
+# Considering we're flowing these weights into a softmax later on, we don't
+# want a high variance for wei as the exponentiation operation will give
+# much higher probabilities to the higher values, so we do a normalization
+# operation on wei beforehand
+wei = wei * head_size**-0.5
+
+# We're still making sure that future tokens cannot communicate with
+# past tokens using a decoder block
+tril = torch.tril(torch.ones(T, T))
+wei = wei.masked_fill(tril == 0, float('-inf'))
+wei = F.softmax(wei, dim=-1)
+
+# Instead of just multiplying the weights with x, we use
+# another linear transformation of x so that we can have
+# values
+value = nn.Linear(C, head_size, bias=False) # C, H
+v = value(x) # B, T, C @ C, H -> B, T, H
+
+out = wei @ v # B, T, T @ B, T, H -> B, T, H
