@@ -254,3 +254,4 @@ for steps in range(TRAINING_ITERS):
 
 print(estimate_loss())
 get_prediction()
+print(sum(p.numel() for p in m.parameters()))
