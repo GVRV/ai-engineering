@@ -3,20 +3,21 @@ import torch.nn as nn
 from torch.nn import functional as F
 torch.manual_seed(1337)
 
-# Don't have cuda :(
-# print(torch.cuda.is_available())
+device = 'mps' if torch.backends.mps.is_available() else 'cpu'
 
 TEXT = open('input.txt', 'r', encoding='utf-8').read()
 # print(len(TEXT))
 
 TOKENS = sorted(list(set(TEXT))) # unique characters in the dataset
 VOCAB_SIZE = len(TOKENS)
-NUM_EMBEDDING = 32
-NUM_TRANSFORMERS = 3
+NUM_EMBEDDING = 384
+NUM_TRANSFORMERS = 6
 DROPOUT_PROB = 0.2
 TRAINING_ITERS = 5000
-NUM_HEADS = 4
+LEARNING_RATE = 3e-4
+NUM_HEADS = 6
 EVAL_ITERATIONS = 200
+EVAL_INTERVAL = 500
 # print(len(TOKENS))
 # print(TOKENS)
 
@@ -42,19 +43,20 @@ val_data = data[n:]
 # to make predictions over a certain number of tokens
 # i.e. Given $X number of tokens, what character will follow?
 # This is called the block_size or context_size
-block_size = 8
+block_size = 256
 
 # For GPU efficiency, we again use a bunch of independent block sizes
 # while training so that calculations can be done in parallel faster
 # The number of datasets being trained on in parallel is called
 # the batch_size
-batch_size = 32
+batch_size = 64
 
 def get_batch(split):
     data = train_data if split == 'train' else val_data
     ix = torch.randint(len(data) - block_size, (batch_size,))
     x = torch.stack([data[i:i+block_size] for i in ix])
     y = torch.stack([data[i+1:i+block_size+1] for i in ix])
+    x, y = x.to(device), y.to(device)
     return x,y
 
 xb, yb = get_batch('train')
@@ -166,7 +168,7 @@ class TransformerModel(nn.Module):
 
         # idx and targets are both (Batch,Time) tensor of integers
         token_embedding = self.token_embedding_table(idx) # (Batch,Time,Channel)
-        position_embedding = self.position_embedding_table(torch.arange(T)) # (T, C)
+        position_embedding = self.position_embedding_table(torch.arange(T, device=device)) # (T, C)
         x = token_embedding + position_embedding # Broadcasting: B, T, C
         x = self.blocks(x)
         logits = self.lm_head(self.ln(x)) # (Batch, Time, Vocab_Size)
@@ -203,6 +205,7 @@ class TransformerModel(nn.Module):
 
 # Initialise the model
 m = TransformerModel()
+m = m.to(device)
 logits, loss = m(xb, yb)
 # print(logits.shape)
 # print(loss)
@@ -230,7 +233,7 @@ def estimate_loss():
 
     return out
 
-idx = torch.zeros((1, 1), dtype=torch.long)
+idx = torch.zeros((1, 1), dtype=torch.long, device=device)
 
 # Sample from the model
 def get_prediction(size=200):
@@ -240,7 +243,7 @@ def get_prediction(size=200):
 
 # Training loop
 # print(list(m.parameters()))
-optimizer = torch.optim.AdamW(m.parameters(), lr=1e-3)
+optimizer = torch.optim.AdamW(m.parameters(), lr=LEARNING_RATE)
 for steps in range(TRAINING_ITERS):
     xb, yb = get_batch('train')
 
@@ -249,7 +252,7 @@ for steps in range(TRAINING_ITERS):
     loss.backward()
     optimizer.step()
 
-    if steps % 500 == 0:
+    if steps % EVAL_INTERVAL == 0:
         print(estimate_loss())
 
 print(estimate_loss())

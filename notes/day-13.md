@@ -47,3 +47,26 @@ Parameter count (print sum(p.numel() for p in m.parameters())): 42369 (with 3 tr
 
 What I still find shaky, in full sentences:
 - Why do we need a projection operation for each of the FeedForward/MultiHeadAttension modules? What's the purpose? I understand the purpose in the FeedForward layer considering the Transformers paper suggests using a hidden layer of 4x width, so using the projection layer we can get back to the number of embeddings width, but is that the purpose with the multiattention heads as well (in case the number of heads * head size doesn't equal the number of embeddings value)?
+
+### Super Stretch
+
+OK, I cheated. I couldn't wait until tomorrow to beef up the hyper parameters and see a result from the network. After beefing up the hyperparameters like Andrej did, I see the loss plummet (took ~3 hours to train on M1 Mac) and here's the data:
+
+{'train': tensor(3.5739), 'val': tensor(3.5955)}
+{'train': tensor(1.8855), 'val': tensor(2.0003)}
+{'train': tensor(1.5409), 'val': tensor(1.7284)}
+{'train': tensor(1.4011), 'val': tensor(1.6152)}
+{'train': tensor(1.3128), 'val': tensor(1.5508)}
+{'train': tensor(1.2559), 'val': tensor(1.5203)}
+{'train': tensor(1.2084), 'val': tensor(1.4996)}
+{'train': tensor(1.1671), 'val': tensor(1.4847)}
+{'train': tensor(1.1289), 'val': tensor(1.4773)}
+{'train': tensor(1.0934), 'val': tensor(1.4783)}
+{'train': tensor(1.0595), 'val': tensor(1.4876)}
+
+Sampling:
+And fly; where not your ribbod blood,
+If you do but come passion'd with love
+From Oxford and childwer? have you done't; but you,
+As if a three-marument you for your good new,
+Or how of being conceit,
