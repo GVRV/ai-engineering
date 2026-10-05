@@ -10,7 +10,7 @@ def encode(input_str):
         output_tokens.append(list(map(int, input_utf8)))
     return output_tokens
 
-input_text = TEXT[:200]
+input_text = TEXT[:20000]
 input_str = encode(input_text)
 
 STARTING_TOKEN = 256

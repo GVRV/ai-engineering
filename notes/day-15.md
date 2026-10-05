@@ -34,10 +34,11 @@ First 10 Merges:
 -->in<--:183
 -->ha<--:164
 
+Starting length of text: 20000
 Old text length: 20000
-New text length: 5850
-Compression: 3.42
-Length of decoded input: 11151
+New text length: 9301
+Compression: 2.15
+Length of decoded input: 20000
 
 ### Block E
 
