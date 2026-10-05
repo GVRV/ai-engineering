@@ -10,7 +10,8 @@ def encode(input_str):
         output_tokens.append(list(map(int, input_utf8)))
     return output_tokens
 
-input_str = encode(TEXT[:20000])
+input_text = TEXT[:200]
+input_str = encode(input_text)
 
 STARTING_TOKEN = 256
 assert [x for split in input_str for x in split if x >= STARTING_TOKEN] == []
@@ -29,6 +30,10 @@ def merge(splits, replace_token_pair, replace_token_id):
     for tokens in splits:
         new_tokens = []
         idx = 0
+
+        if len(tokens) == 1:
+            new_splits.append(tokens)
+            continue
 
         while idx < len(tokens) - 1:
             pair = (tokens[idx], tokens[idx+1])
@@ -99,8 +104,8 @@ for _ in range(NUM_MERGES):
         break
 
     # Information/debug
-    replacing_string = "".join(chr(_) for _ in decode(most_common_token_pair, merges))
-    print(f"-->{replacing_string}<--:{count}")
+    # replacing_string = "".join(chr(_) for _ in decode(most_common_token_pair, merges))
+    # print(f"-->{replacing_string}<--:{count}")
 
     input_tokens = merge(input_tokens, most_common_token_pair, new_token_id)
     merges[most_common_token_pair] = new_token_id
@@ -117,3 +122,4 @@ print(f"Compression: {compression:.2f}")
 decoded_input = decode(input_flat_tokens, merges)
 decoded_str = "".join(chr(x) for x in decoded_input)
 print(f"Length of decoded input: {len(decoded_input)}")
+assert decoded_str == input_text
