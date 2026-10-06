@@ -6,7 +6,7 @@ print("Bare:")
 print(complete("", QUESTION))
 
 print("Role + Constraints:")
-system_prompt = """"You are a teacher’s assistant for ICSE class 7. Use simple English. Do not invent a page number. If you are not sure, say so. Max 120 words."""
+system_prompt = """You are a teacher’s assistant for ICSE class 7. Use simple English. Do not invent a page number. If you are not sure, say so. Max 120 words."""
 print(complete(system_prompt, QUESTION))
 
 print("Page in the window")
