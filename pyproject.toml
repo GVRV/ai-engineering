@@ -7,7 +7,9 @@ requires-python = ">=3.12"
 dependencies = [
     "django>=6.1.1",
     "matplotlib>=3.11.2",
+    "openai>=3.24.0",
     "pytest>=9.1.1",
+    "python-dotenv>=1.2.4",
     "regex>=2026.9.29",
     "ruff>=0.16.7",
     "tiktoken>=0.14.0",
