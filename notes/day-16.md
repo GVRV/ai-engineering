@@ -30,6 +30,6 @@ JSON parse failed on which runs: 0 (models are good now, I guess?) as both runs 
 Score: grounded 8 / 10
 The worst invention: The winter "less sunlight" assumption is not present in the source material.
 
-Prompt injection, in a sentence I could say to a teacher: We can change the prompt in hidden ways so that if you ask the model the same question, you can get a radically different (and depending on the instructions, much better) response.
+Prompt injection, in a sentence I could say to a teacher: A worksheet you paste in can contain a line that tells the model to ignore you and give the student the answers. The model may obey that line, because it cannot reliably tell your instructions from the worksheet.
 
 What I still find shaky, in full sentences: Apart from prompt engineering being a subtle art and not a science, and the constant change of model behviour between updates and different providers, nothing.
