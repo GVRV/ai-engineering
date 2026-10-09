@@ -28,14 +28,14 @@ def get_whole_chunk(content):
     ]
 
 def get_fixed_window_chunks(content, window_size=80, overlap=20):
-    effective_size = (window_size-overlap)
-    total_windows = int(len(content)/effective_size) + 1
+    words = content.split()
     chunks = []
-    for i in range(total_windows):
+    for i in range(0, len(words) - window_size + 1, window_size - overlap):
+        chunk = " ".join(words[i: i + window_size])
         chunks.append(
             (
-                f"FIXED_WINDOW_{i}",
-                content[i*effective_size:(i*effective_size)+window_size]
+                f"FIXED_WINDOW_{len(chunks)}",
+                chunk
             )
         )
     return chunks

@@ -16,7 +16,7 @@ Chunking is the process by which you create chunks from your corpus of knowledge
 
 How many chunks in each scheme:
 - Whole: 1
-- Fixed Window: 75
+- Fixed Window: 11
 - Sections: 7
 
 A chunk that was too wide: Whole file

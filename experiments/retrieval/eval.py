@@ -18,14 +18,14 @@ def get_whole_chunk(content):
     ]
 
 def get_fixed_window_chunks(content, window_size=80, overlap=20):
-    effective_size = (window_size-overlap)
-    total_windows = int(len(content)/effective_size) + 1
+    words = content.split()
     chunks = []
-    for i in range(total_windows):
+    for i in range(0, len(words) - window_size + 1, window_size - overlap):
+        chunk = " ".join(words[i: i + window_size])
         chunks.append(
             (
-                f"FIXED_WINDOW_{i}",
-                content[i*effective_size:(i*effective_size)+window_size]
+                f"FIXED_WINDOW_{len(chunks)}",
+                chunk
             )
         )
     return chunks
@@ -47,6 +47,8 @@ corpus_content = open(CORPUS/"photosynthesis_chapter.md", "r").read()
 whole_file_chunks = get_whole_chunk(corpus_content)
 fixed_window_chunks = get_fixed_window_chunks(corpus_content)
 section_chunks = get_section_chunks(corpus_content)
+
+import pdb; pdb.set_trace()
 
 def embed_search(question: str, chunks: list[tuple[str, str]], k: int = 3):
     bodies = [c[1] for c in chunks]
