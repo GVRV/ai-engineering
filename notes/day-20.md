@@ -8,15 +8,15 @@ Today I only inspect. I do not tokenize, I do not load DistilBERT, I do not call
 
 # Block A
 
-- What a row is in our dataset. A row consists of 3 columns: A label (int64) to signify the class, a title (string) and a description (string). The labels are 1: World 2: Sports 3: Business 4: Sci/Tech. An example of a row is below:
+- What a row is in our dataset. A row consists of 3 columns: A label (int64) to signify the class, a title (string) and a description (string). The labels are World (0), Sports (1), Business (2), Sci/Tech (3). An example of a row is below:
 
 ```
-Label: 3
+Label: 2
 Title: Wall St. Bears Claw Back Into the Black (Reuters)
 Description: Reuters - Short-sellers, Wall Street's dwindling\band of ultra-cynics, are seeing green again.
 ```
 
-- What a split is: whenever we're training a model by minimising a loss on a certain dataset, we split the dataset into different chunks which are used for different purposes and these are called splits. The most case is to use 3 splits: Train, Validation and Test splits (roughly 80%, 10% and 10%). You use the training set to train the model which might result in some overfitting. You rarely do a forward pass on the validation split to understand how the model behaves with data it sees rarely and to tune hyperparameters (if needed). Once you have a good model trained, you test it once on the test split to get a loss on the completely out of sample data which can be judged as how the model will behave in the real world where it might encouter data it has never seen during its training.
+- What a split is: whenever we're training a model by minimising a loss on a certain dataset, we split the dataset into different chunks which are used for different purposes and these are called splits. The most case is to use 3 splits: Train, Validation and Test splits (roughly 80%, 10% and 10%). You use the training set to train the model which might result in some overfitting. After completing an epoch (1 run of the whole of test split), we do a single forward pass on the entire validation split to understand how the model behaves with data it sees rarely and to tune hyperparameters (if needed). Once you have a good model trained, you test it once on the test split to get a loss on the completely out of sample data which can be judged as how the model will behave in the real world where it might encouter data it has never seen during its training, this is the public loss you publish.
 
 - Why we still cut validation: Answered above, we cut some of the training data so that there is some data we can test against (for tuning hyperparameters or getting an estimate of the real world loss) while ensuring the model isn't getting overfitted to this data.
 
@@ -49,10 +49,10 @@ Reuters - Venezuelans turned out early\and in large numbers on Sunday to vote in
 Dataset id I loaded: 'sh0416/ag_news' from HuggingFace
 Train rows, test rows: 120000, 7600
 Columns: ['label', 'title', 'description']
-Label map: 1: World 2: Sports 3: Business 4: Sci/Tech
+Label map: World (0), Sports (1), Business (2), Sci/Tech (3)
 
-Train class counts: {3: 30000, 4: 30000, 2: 30000, 1: 30000}
-Test class counts: {3: 1900, 4: 1900, 2: 1900, 1: 1900}
+Train class counts: {3: 30000, 0: 30000, 2: 30000, 1: 30000}
+Test class counts: {3: 1900, 0: 1900, 2: 1900, 1: 1900}
 
 One blurb per class, first 200 characters: Blurbs pasted above.
 

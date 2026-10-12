@@ -1,12 +1,12 @@
 from datasets import load_dataset, Dataset
 from collections import Counter
 
-ds = load_dataset("sh0416/ag_news")
+ds = load_dataset("fancyzhx/ag_news")
 
 print(ds)
 
 print(ds["train"].column_names)
-assert ds["train"].column_names == ['label', 'title', 'description']
+assert ds["train"].column_names == ['text', 'label']
 
 print(len(ds["train"]))
 print(len(ds["test"]))
@@ -24,10 +24,10 @@ print(class_counts(ds["train"]))
 print(class_counts(ds["test"]))
 
 LABELS = {
-    1: "World",
-    2: "Sports",
-    3: "Business",
-    4: "Sci/Tech",
+    0: "World",
+    1: "Sports",
+    2: "Business",
+    3: "Sci/Tech",
 }
 
 def print_samples(split: Dataset) -> None:
@@ -36,8 +36,7 @@ def print_samples(split: Dataset) -> None:
     for row in split:
         if row["label"] not in shown:
             print(LABELS[row["label"]])
-            print(row["title"][:240])
-            print(row["description"][:240])
+            print(row["text"][:240])
             shown.add(row["label"])
 
         if len(shown) == len(LABELS.keys()):
