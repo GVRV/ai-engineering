@@ -86,8 +86,8 @@ def compute_metrics(eval_pred):
 #     compute_metrics=compute_metrics,
 # )
 # smoke.train()
-# smoke.save_model("runs/day21/final")
-# tokenizer.save_pretrained("runs/day21/final")
+# smoke.save_model("runs/smoke/final")
+# tokenizer.save_pretrained("runs/smoke/final")
 
 args = TrainingArguments(
     output_dir="runs/day21",
