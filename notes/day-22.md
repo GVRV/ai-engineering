@@ -18,10 +18,10 @@ Epoch 2 train loss, val accuracy: {'eval_loss': '0.2321', 'eval_accuracy': '0.94
 Day 21 val accuracy: 0.9407
 
 Which epoch was best: 2
-final path, and the checkpoint folder it came from: "runs/day21/final" from checkpoint 2
+final path, and the checkpoint folder it came from: "runs/day22/final" from checkpoint 2
 
 Two probe sentences, day 21 vs day 22:
-- [{'label': 'World', 'score': 0.8471630215644836}] (Higher than yesterday's 0.7880864143371582)
+- [{'label': 'World', 'score': 0.8471630215644836}] (Changed from Yesterday's "Sports" classification with a lower probability 0.7880864143371582)
 - [{'label': 'Business', 'score': 0.9957653284072876}] (Slightly higher than yesterday's 0.9920560717582703)
 
 Did I resume the old scheduler: no
