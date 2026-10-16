@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The model is a DistilBERT encoder with 4-way head, fine-tuned to label a 128 character news blurb as World, Sports, Business, Sci/Tech. This is a classification model; it is not a chatbot or a generator.
+The model is a DistilBERT encoder with 4-way head, fine-tuned to label a news blurb as World, Sports, Business, Sci/Tech. This is a classification model; it is not a chatbot or a generator.
 
 ### Data
 
@@ -10,14 +10,14 @@ The training data used is the [fancyzhx/ag_news](https://huggingface.co/datasets
 
 ### Training
 
-Training started from the [distilbert/distilbert-base-uncased](https://huggingface.co/distilbert/distilbert-base-uncased) model. We ran one epoch of the training split from the base model using a starting learning rate of `2e-5`. Then we reloaded the model from this checkpoint and trained again for two more epochs of the training split with a fresh starting learning rate of `2e-5` as the LR had decayed to almost zero during the previous run. During this run, we saved the model with the highest accuracy on the validation split epoch. The training used MPS device backend for PyTorch as it was performed on Apple Silicon.
+Training started from the [distilbert/distilbert-base-uncased](https://huggingface.co/distilbert/distilbert-base-uncased) model and tokenizer. We tokenized each headline by truncating it to 128 tokens (or padding when necessary). We ran one epoch of the training split from the base model using a starting learning rate of `2e-5`. Then we reloaded the model from this checkpoint and trained again for two more epochs of the training split with a fresh starting learning rate of `2e-5` as the LR had decayed to almost zero during the previous run. During this run, we saved the model with the highest accuracy on the validation split epoch. The training used MPS device backend for PyTorch as it was performed on Apple Silicon.
 
 ### Accuracy
 
 - Final Test split accuracy: 0.9441
 - Validation split accuracy at selection: 0.9462
 
-The minor gap of `0.0003` isn't significant enough to signal the model training was not successful.
+The minor gap of `0.0021` isn't significant enough to signal the model training was not successful.
 
 #### Per-class Accuracy
 
