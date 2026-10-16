@@ -68,7 +68,7 @@ trainer = Trainer(
     train_dataset=train_tok,
     eval_dataset=val_tok,
     processing_class=tokenizer,
-    data_collator=DataCollatorWithPadding(tokenizer=tokenizer),
+    data_collator=DataCollatorWithPadding(tokenizer=tokenizer), # padding during training to avoid memory usage of padding all input (108000) before hand
     compute_metrics=compute_metrics,  # same function as yesterday
 )
 
