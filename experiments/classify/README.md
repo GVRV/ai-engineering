@@ -41,6 +41,8 @@ Reason: It seems like a lot of text does indeed have overlap between technology 
 
 ## Run the model
 
+You can find the model on HuggingFace [here](https://huggingface.co/GVRV/ag_news).
+
 Use the `classify.py` helper script to classify a headline:
 
 ```
@@ -57,7 +59,9 @@ usage: python classify.py <headline>
 [{'label': 'Business', 'score': 0.8044154047966003}]
 ```
 
-Please note: `runs/day22/final` is `.gitignored` so the weights will be unavailable if you have cloned this repository. You will also notice that the first headline mentioning legendary swimmer `Phelps` is mis-classified as `World` instead of `Sports`: this is a known failure case of the model. You can find the model on HuggingFace [here](https://huggingface.co/GVRV/ag_news).
+You will also notice that the first headline mentioning legendary swimmer `Phelps` is mis-classified as `World` instead of `Sports`: this is a known failure case of the model.
+
+Please note: local checkpoints like `runs/day22/final` and `runs/day21/final` are `.gitignored` so the weights will be unavailable if you have cloned this repository.
 
 ## Caveats
 

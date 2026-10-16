@@ -10,7 +10,7 @@ def main():
 
     clf = pipeline(
         "text-classification",
-        model="runs/day22/final",
+        model="GVRV/ag_news",
     )
     print(clf(text))
 
