@@ -15,7 +15,7 @@ Hit@1 from yesterday, for reference: 0.625
 Table of 20:
 i | gold_hit | reply | grounded | useful | one line
 1 | true | 138 metres (452.8 ft) | true | true |
-2 | true | Matrix algebra (the use of matrices and elimination methods similar to Gaussian elimination) | true | true | Matrix algebra is grounded, but Gaussian eliminiation is not
+2 | true | Matrix algebra (the use of matrices and elimination methods similar to Gaussian elimination) | false | true | Matrix algebra is grounded, but Gaussian eliminiation is not
 3 | true | Pawiak | true | true |
 4 | true | Contractors. | true | true |
 5 | true | a fee per unit of connection time, even when no data is transferred. | true | true |
@@ -36,7 +36,7 @@ i | gold_hit | reply | grounded | useful | one line
 20 | false | NOT_IN_SOURCE | true | false |
 
 Bucket counts:
-- gold hit, grounded, useful: 10
+- gold hit, grounded, useful: 9
 - gold hit, not useful: 0
 - gold miss, refused or answered from paste: 6
 - gold miss, answered with fact not in paste: 4
