@@ -22,7 +22,7 @@ We did not try to bump up the numbers by judging that a hit means that the answe
 
 ## Generation Number
 
-We then used 20 questions (10 with a gold-id hit and 10 with a gold-id hit) found randomly using a numpy randomness seed of `42`. For each of these questions, we used the `openai/gpt-oss-20b` model (temperature `0`) to generate the answer to the questions from within the source paragraph sent to it or reply with `NOT_IN_SOURCE`. The augmented paragraph was capped at the first 1500 characters and we scored whether the model generated a grounded reply against this cropped text. The results are as follows:
+We then used 20 questions (10 with a gold-id hit and 10 with a gold-id miss) found randomly using a numpy randomness seed of `42`. For each of these questions, we used the `openai/gpt-oss-20b` model (temperature `0`) to generate the answer to the questions from within the source paragraph sent to it or reply with `NOT_IN_SOURCE`. The augmented paragraph was capped at the first 1500 characters and we scored whether the model generated a grounded reply against this cropped text. The results are as follows:
 
 - gold hit, grounded, useful: 9
 - gold hit, not grounded, useful: 1
@@ -32,11 +32,11 @@ We then used 20 questions (10 with a gold-id hit and 10 with a gold-id hit) foun
 
 ### The Invention
 
-For the question `Which countries are represented in the Far Eastern collections?`, even though the answer didn't appear in the augmented context, the model used its world knowledge to generate the correct reply: `China, Japan, Korea`.
+For the question `A complete loss of rainforest cover may be caused by what type of emissions?`, even though the answer didn't appear in the augmented context, the model used its world knowledge to generate the slightly reply: `Carbon emissions.` (gold reply was "Greenhouse emissions").
 
 The context passed in was:
 ```
-The V&A covers 12.5 acres (51,000 m2) and 145 galleries. Its collection spans 5,000 years of art, from ancient times to the present day, from the cultures of Europe, North America, Asia and North Africa. The holdings of ceramics, glass, textiles, costumes, silver, ironwork, jewellery, furniture, medieval objects, sculpture, prints and printmaking, drawings and photographs are among the largest and most comprehensive in the world. The museum owns the world's largest collection of post-classical sculpture, with the holdings of Italian Renaissance items being the largest outside Italy. The departments of Asia include art from South Asia, China, Japan, Korea and the Islamic world. The East Asian collections are among the best in Europe, with particular strengths in ceramics and metalwork, while the Islamic collection is amongst the largest in the Western world. Overall, it is one of the largest museums in the world.
+Environmentalists are concerned about loss of biodiversity that will result from destruction of the forest, and also about the release of the carbon contained within the vegetation, which could accelerate global warming. Amazonian evergreen forests account for about 10% of the world's terrestrial primary productivity and 10% of the carbon stores in ecosystems—of the order of 1.1 × 1011 metric tonnes of carbon. Amazonian forests are estimated to have accumulated 0.62 ± 0.37 tons of carbon per hectare per year between 1975 and 1996.
 ```
 
 ### The False Refusal
@@ -55,16 +55,18 @@ Use the script `ask.py` to ask a question, find the highest ranking context that
 Note: It requires `GROQ_API_KEY` in an `.env` file to operate and has external Python dependencies like `sentence_transformers` and `datasets`.
 
 ```
-> python ask.py "Which countries are represented in the Far Eastern collections?"
-China, Japan, Korea
+> python ask.py "A complete loss of rainforest cover may be caused by what type of emissions?"
+Answer: Carbon emissions.
+Context: Environmentalists are concerned about loss of biodiversity that will result from destruction of the forest, and also about the release of the carbon contained within the vegetation, which could accelerate global warming. Amazonian evergreen forests account for about 10% of the world's terrestrial primary productivity and 10% of the carbon stores in ecosystems—of the order of 1.1 × 1011 metric tonnes of carbon. Amazonian forests are estimated to have accumulated 0.62 ± 0.37 tons of carbon per hectare per year between 1975 and 1996.
 
 > python ask.py "What day was the Super Bowl played on?"
-NOT_IN_SOURCE
+Answer: NOT_IN_SOURCE
+Context: The game's media day, which was typically held on the Tuesday afternoon prior to the game, was moved to the Monday evening and re-branded as Super Bowl Opening Night. The event was held on February 1, 2016 at SAP Center in San Jose. Alongside the traditional media availabilities, the event featured an opening ceremony with player introductions on a replica of the Golden Gate Bridge.
 ```
 
 ### What the Project is Not
 
-- We have not used a vector database. The corpus of 2067 questions is small enough to embed and matrix multiply on a local machine. A larger corpus would need an index for ranking.
+- We have not used a vector database. The corpus of 2067 paragraphs is small enough to embed and matrix multiply on a local machine. A larger corpus would need an index for ranking.
 - We judged whether the response was grounded and useful manually by going through the augmented context and comparing it with the response generated by the model. We do not have an eval harness, everything has been hand scored.
 - We are not claiming that the Hit@1 score of 0.625 is a leaderboard number. This just happened to be our observation for this particular dataset, using a particular split from it and calculating the number over dot products using a particular embedding model.
 - The wrong page still generated the correct answer from the model because the model used its real world knowledge. This is the failure mode we need to focus on and correct.

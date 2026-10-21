@@ -60,7 +60,8 @@ def main():
     user_prompt = get_user_prompt(paste_context, question)
     response = complete(SYSTEM_PROMPT, user_prompt)
     # print reply, then the paste
-    print(response)
+    print("Answer:", response)
+    print("Context:", paste_context)
 
 
 if __name__ == "__main__":
