@@ -27,12 +27,12 @@ We then used 20 questions (10 with a gold-id hit and 10 with a gold-id miss) fou
 - gold hit, grounded, useful: 9
 - gold hit, not grounded, useful: 1
 - gold hit, not useful: 0
-- gold miss, refused or answered from paste: 6
-- gold miss, answered with fact not in paste: 4
+- gold miss, refused or answered from paste: 7
+- gold miss, answered with fact not in paste: 3
 
 ### The Invention
 
-For the question `A complete loss of rainforest cover may be caused by what type of emissions?`, even though the answer didn't appear in the augmented context, the model used its world knowledge to generate the slightly reply: `Carbon emissions.` (gold reply was "Greenhouse emissions").
+For the question `A complete loss of rainforest cover may be caused by what type of emissions?`, even though the answer didn't appear in the augmented context, the model used its world knowledge to generate the slightly wrong reply: `Carbon emissions.` (gold reply was "Greenhouse emissions").
 
 The context passed in was:
 ```

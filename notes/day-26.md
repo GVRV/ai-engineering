@@ -32,14 +32,14 @@ i | gold_hit | reply | grounded | useful | one line
 16 | false | NOT_IN_SOURCE | true | false |
 17 | false | Carbon emissions. | false | false | The corpus contained a lot of references to carbon stored in rainforests but didn't mention carbon emissions at all
 18 | false | NOT_IN_SOURCE | false | false | The source starts with "In 1466, perhaps 40,000 people died of the plague in Paris" so a much more useful, grounded reply would be at least 40,000.
-19 | false | China, Japan, Korea | false | true |
+19 | false | China, Japan, Korea | true | true |
 20 | false | NOT_IN_SOURCE | true | false |
 
 Bucket counts:
 - gold hit, grounded, useful: 9
 - gold hit, not useful: 0
-- gold miss, refused or answered from paste: 6
-- gold miss, answered with fact not in paste: 4
+- gold miss, refused or answered from paste: 7
+- gold miss, answered with fact not in paste: 3
 
 One row where the model knew the answer and the paste did not: "Which countries are represented in the Far Eastern collections?"
 One row where the paste had it and the model refused: "How much of Paris' population was killed by the plague?"
