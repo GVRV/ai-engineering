@@ -58,6 +58,17 @@ chosen = np.concatenate([
     rng.choice(misses, size=10, replace=False),
 ])
 
+def contains(paste, answers):
+    """Does any part of the answer word exist in the
+    paste text which was sent to the model to generate
+    an answer?
+    """
+    paste_l = paste.lower()
+    return any(
+        a.lower() in paste_l
+        for a in answers if a.strip()
+    )
+
 for idx in chosen:
     context = contexts[top1[idx]]
 
@@ -74,4 +85,5 @@ for idx in chosen:
     print("Squad Answer:", squad_answer)
     print("Model Answer:", response)
     print("Gold hit:", top1[idx] == gold_ids[idx])
+    print("Answer in Paste:", contains(paste_context, squad_answer))
     print("----")
