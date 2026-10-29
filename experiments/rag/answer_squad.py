@@ -73,7 +73,7 @@ def contains(paste, answers):
     """
     paste_n = norm(paste)
     return any(
-        a.lower() in paste_n
+        norm(a) in paste_n
         for a in answers if a.strip()
     )
 

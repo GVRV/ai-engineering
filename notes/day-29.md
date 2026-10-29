@@ -49,8 +49,8 @@ Did the judge see the gold span: no
 Twenty reused, seed 42: yes
 
 Net flips after normalization: 1
-Judge agreement count: 18
-Disagreements: 2
+Judge agreement with hand grounded count: 17
+Judge disagreements with hand grounded: 3
 
 Three rows, who I think is right:
 - For the question `What modern math concept did Zhu Shijie do work similar to?` the model judges the answer `Matrix algebra (the use of rectangular arrays of coefficients equivalent to modern matrices).` to be grounded, but I had judged it as not grounded because the model earlier included some references to "Gaussian elimination" in its reply but it's not doing so right now and we haven't saved the responses from earlier (because you didn't tell me responses should have saved/committed for future exercises).
