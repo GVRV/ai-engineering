@@ -13,8 +13,8 @@ How many questions, seed: 20, 42
 Hit@1 from yesterday, for reference: 0.625
 
 Table of 20:
-i | gold_hit | reply | answer in paste | grounded | useful | one line
-1 | true | 138 metres (452.8 ft) | true | true | true |
+i | gold_hit | reply | answer in paste (normalised) | grounded | useful | one line
+1 | true | 138 metres (452.8 ft) | false | true | true |
 2 | true | Matrix algebra (the use of matrices and elimination methods similar to Gaussian elimination) | true | false | true | Matrix algebra is grounded, but Gaussian eliminiation is not
 3 | true | Pawiak | true | true | true |
 4 | true | Contractors. | true | true | true |

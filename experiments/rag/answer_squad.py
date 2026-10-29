@@ -3,6 +3,8 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from prompting.client import complete
+import re
+import json
 
 SYSTEM_PROMPT = """Answer only from the paragraph. If the paragraph does not say, reply exactly `NOT_IN_SOURCE`. Do not use outside knowledge.
 """
@@ -58,16 +60,24 @@ chosen = np.concatenate([
     rng.choice(misses, size=10, replace=False),
 ])
 
+def norm(s):
+    s = s.lower()
+    s = s.replace(" and ", " ")
+    s = re.sub(r"[^a-z0-9\s]", " ", s)
+    return " ".join(s.split())
+
 def contains(paste, answers):
     """Does any part of the answer word exist in the
     paste text which was sent to the model to generate
     an answer?
     """
-    paste_l = paste.lower()
+    paste_n = norm(paste)
     return any(
-        a.lower() in paste_l
+        a.lower() in paste_n
         for a in answers if a.strip()
     )
+
+f = open('/tmp/answer_log.jsonl', 'w')
 
 for idx in chosen:
     context = contexts[top1[idx]]
@@ -75,15 +85,32 @@ for idx in chosen:
     squad_question = ds[idx]["question"]
     squad_answer = ds[idx]["answers"]["text"]
     paste_context = context[:1500]
+    gold_hit = bool(top1[idx] == gold_ids[idx])
+    answer_in_paste = contains(paste_context, squad_answer)
 
     user_prompt = get_user_prompt(paste_context, squad_question)
     response = complete(SYSTEM_PROMPT, user_prompt)
+
 
     print("----")
     print("Squad Question:", squad_question)
     print("Context:", paste_context)
     print("Squad Answer:", squad_answer)
     print("Model Answer:", response)
-    print("Gold hit:", top1[idx] == gold_ids[idx])
-    print("Answer in Paste:", contains(paste_context, squad_answer))
+    print("Gold hit:", gold_hit)
+    print("Answer in Paste:", answer_in_paste)
     print("----")
+
+    judging_data = {
+        "index": int(idx),
+        "question": squad_question,
+        "paste": paste_context,
+        "reply": response,
+        "gold_hit": gold_hit,
+        "answer_in_paste_normalized": answer_in_paste,
+    }
+
+    f.write(json.dumps(judging_data))
+    f.write("\n")
+
+f.close()
