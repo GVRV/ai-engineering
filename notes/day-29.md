@@ -12,9 +12,7 @@ Substring containment is a pre-filter. It cannot grade a paraphrase, and it cann
 
 Total: 1
 
-- `How high is the highest point in Warsaw?` flipped because the answers ['452.8 ft', '115.7 metres', '115.7 metres'] contain decimals with points in them which get normalised to spaces in the paste context, so we can't find them.
-
-- The question `Which countries are represented in the Far Eastern collections?` did not flip because the paste contains the normalised string "china japan korea" but the answers are ['China, Japan and Korea', 'China, Japan and Korea', 'East Asia: China, Japan and Korea'] so unless we remove stop words like "and" we run into the same issue.
+- The question `Which countries are represented in the Far Eastern collections?` did flip!
 
 Conclusion: This seems like one major con of this whole "find in paste" algorithm: the more we try to improve it, the more edge cases we run into. I highly doubt that anyone in the industry would be using this method for anything apart from structured data (inputs/outputs).
 
@@ -48,7 +46,7 @@ Answer model, judge model, temperature: openai/gpt-oss-20b, openai/gpt-oss-20b, 
 Did the judge see the gold span: no
 Twenty reused, seed 42: yes
 
-Net flips after normalization: 1
+Net flips after normalization: 2
 Judge agreement with hand grounded count: 17
 Judge disagreements with hand grounded: 3
 

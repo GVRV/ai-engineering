@@ -73,8 +73,8 @@ def contains(paste, answers):
     """
     paste_n = norm(paste)
     return any(
-        norm(a) in paste_n
-        for a in answers if a.strip()
+        (n := norm(a)) and n in paste_n
+        for a in answers
     )
 
 f = open('/tmp/answer_log.jsonl', 'w')
