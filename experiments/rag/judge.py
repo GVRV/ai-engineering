@@ -23,6 +23,11 @@ Reply:
 {model_reply}
 """
 
+def judge_reply_grounding(paste: str, reply: str) -> str:
+    user_prompt = get_user_prompt(paste, reply)
+    return complete(SYSTEM_PROMPT, user_prompt)
+
+
 def main():
     judging_file_path = " ".join(sys.argv[1:]).strip()
     if not judging_file_path:
@@ -36,14 +41,15 @@ def main():
             paste = data["paste"]
             reply = data["reply"]
 
-            user_prompt = get_user_prompt(paste, reply)
-            response = complete(SYSTEM_PROMPT, user_prompt)
+            reply_judgement = judge_reply_grounding(
+                paste, reply
+            )
 
             print("----")
             print("Squad Question:", data["question"])
             print("Context:", paste)
             print("Model Answer:", reply)
-            print("Judge:", response)
+            print("Judge:", reply_judgement)
             print("----")
 
 

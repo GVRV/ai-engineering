@@ -20,25 +20,20 @@ Question:
 {question}
 """
 
-def main():
-    question = " ".join(sys.argv[1:]).strip()
-    if not question:
-        print("usage: python ask.py <question>")
-        return
+# Load the dataset
+ds = load_dataset("rajpurkar/squad", split="validation")
 
-    # Load the dataset
-    ds = load_dataset("rajpurkar/squad", split="validation")
+contexts = list(dict.fromkeys(ds["context"]))
 
-    contexts = list(dict.fromkeys(ds["context"]))
+index = {c: i for i, c in enumerate(contexts)}
+gold_ids = [index[row["context"]] for row in ds]
 
-    index = {c: i for i, c in enumerate(contexts)}
-    gold_ids = [index[row["context"]] for row in ds]
+# Embed all of the corpus
+model = SentenceTransformer("all-MiniLM-L6-v2")
+# Shape (n_contexts, n_embeddings)
+doc = model.encode(contexts, normalize_embeddings=True, show_progress_bar=True)
 
-    # Embed all of the corpus
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-    # Shape (n_contexts, n_embeddings)
-    doc = model.encode(contexts, normalize_embeddings=True, show_progress_bar=True)
-
+def ask_model(question: str) -> dict:
     # rank against the same contexts as retrieve_squad.py
     # Embed the questions
     # Shape (1, n_embeddings)
@@ -52,6 +47,7 @@ def main():
     # Did we get the correct context as the first hit of
     # our embedding search?
     top1 = scores.argmax(axis=1)[0]
+    top1_score = scores.max(axis=1)[0]
 
     # paste contexts[top1][:1500]
     context = contexts[top1]
@@ -59,9 +55,24 @@ def main():
 
     user_prompt = get_user_prompt(paste_context, question)
     response = complete(SYSTEM_PROMPT, user_prompt)
+
+    return {
+        "reply": response,
+        "paste": paste_context,
+        "top_score": float(top1_score),
+    }
+
+def main():
+    question = " ".join(sys.argv[1:]).strip()
+    if not question:
+        print("usage: python ask.py <question>")
+        return
+
+    data = ask_model(question)
+
     # print reply, then the paste
-    print("Answer:", response)
-    print("Context:", paste_context)
+    print("Answer:", data["reply"])
+    print("Context:", data["paste"])
 
 
 if __name__ == "__main__":

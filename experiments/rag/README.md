@@ -30,6 +30,23 @@ We then used 20 questions (10 with a gold-id hit and 10 with a gold-id miss) fou
 - gold miss, refused or answered from paste: 7
 - gold miss, answered with fact not in paste: 3
 
+### Extention: Judging reply
+
+We extended the pipeline so that we can send the model's reply and the retrieved paste context in a separate request to a model to judge automatically whether the reply was factually grounded in the information available in the paste context.
+
+We're using the same `openai/gpt-oss-20b` model (temperature `0`) to generate a one sentence reply on whether the reply is grounded or not: a "YES" or "NO" followed by a semi-colon, followed by a one sentence explanation why the model thinks so.
+
+Comparing our manual grounding check against the automated scoring by model judge, we agreed on 17/20 questions. For the 3 questions where we had a disagreement:
+
+- Question "What modern math concept did Zhu Shijie do work similar to?" reply is factually grounded but I seem to have mis-labelled it when I was evaluating manually (or using a previously unlogged reply which I assumed was ungrounded). I cannot reproduce this issue anymore.
+- Question "What is the Chinese name for the Yuan dynasty?" reply is judged as grounded by the model but the answer contains some Chinese characters which are not in the paste, so the model used some real world knowledge to evaluate the reply.
+- Question "A complete loss of rainforest cover may be caused by what type of emissions?" reply was judged as grounded even though the paste didn't mention carbon emissions so there was some amount of inference included in the model's judgement.
+
+This is a very rudimentary form of automatic judgement. There are several improvements that a team might build:
+- Use a second model as a judge (or a group of models as a judge consensus), so the model is not grading its own style of replying.
+- Use a JSONL test suite so that we can run a loop on a fixed set of questions when the prompt changes and diff against the judgement boolean values to determine whether we're improving performance or not.
+- We need an index once the knowledge corpus is larger for performance optimization. I have no built that here in this toy project.
+
 ### The Invention
 
 For the question `A complete loss of rainforest cover may be caused by what type of emissions?`, even though the answer didn't appear in the augmented context, the model used its world knowledge to generate the slightly wrong reply: `Carbon emissions.` (gold reply was "Greenhouse emissions").
@@ -64,6 +81,26 @@ Answer: NOT_IN_SOURCE
 Context: The game's media day, which was typically held on the Tuesday afternoon prior to the game, was moved to the Monday evening and re-branded as Super Bowl Opening Night. The event was held on February 1, 2016 at SAP Center in San Jose. Alongside the traditional media availabilities, the event featured an opening ceremony with player introductions on a replica of the Golden Gate Bridge.
 ```
 
+### With the grounded reply judging
+
+Use the script `loop.py` to ask a question, find the highest ranking context that might contain the answer and send a request to Groq to generate an answer. Based on the context paste retrieved and the model's reply, we send another judgement request to Groq for a model to determine automatically whether the reply was factually grounded from the paste information or not.
+
+Note: It requires `GROQ_API_KEY` in an `.env` file to operate and has external Python dependencies like `sentence_transformers` and `datasets`.
+
+```
+> python loop.py "What day was the Super Bowl played on?"
+Model Reply: NOT_IN_SOURCE
+Grounded Reply Judgement: NO; paragraph contains the answer.
+Paste Context: The game's media day, which was typically held on the Tuesday afternoon prior to the game, was moved to the Monday evening and re-branded as Super Bowl Opening Night. The event was held on February 1, 2016 at SAP Center in San Jose. Alongside the traditional media availabilities, the event featured an opening ceremony with player introductions on a replica of the Golden Gate Bridge.
+Top Cosine Score: 0.7005981206893921
+
+> python loop.py "A complete loss of rainforest cover may be caused by what type of emissions?"
+Model Reply: Carbon emissions.
+Grounded Reply Judgement: YES; paragraph states release of carbon from vegetation, implying carbon emissions.
+Paste Context: Environmentalists are concerned about loss of biodiversity that will result from destruction of the forest, and also about the release of the carbon contained within the vegetation, which could accelerate global warming. Amazonian evergreen forests account for about 10% of the world's terrestrial primary productivity and 10% of the carbon stores in ecosystems—of the order of 1.1 × 1011 metric tonn
+Top Cosine Score: 0.6006655693054199
+```
+
 ### What the Project is Not
 
 - We have not used a vector database. The corpus of 2067 paragraphs is small enough to embed and matrix multiply on a local machine. A larger corpus would need an index for ranking.
@@ -71,3 +108,5 @@ Context: The game's media day, which was typically held on the Tuesday afternoon
 - We are not claiming that the Hit@1 score of 0.625 is a leaderboard number. This just happened to be our observation for this particular dataset, using a particular split from it and calculating the number over dot products using a particular embedding model.
 - The wrong page still generated the correct answer from the model because the model used its real world knowledge. This is the failure mode we need to focus on and correct.
 - The hand-made photosynthesis files were crafted for an even simpler RAG experiment. You can read about it in `experiments/retrieval/README.md`. Both experiments are separate, there happen to be some similarities like the embedding model used, but the numbers are not to be confused to be same across both experiments.
+
+#### Caveats
