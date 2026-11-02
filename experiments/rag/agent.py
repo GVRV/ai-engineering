@@ -89,6 +89,8 @@ def ask_model(question: str) -> dict:
         if not response.tool_calls:
             break
 
+        extra_messages.append(response)
+
         for call in response.tool_calls:
             call_id = call.id
             func_name = call.function.name
@@ -101,7 +103,6 @@ def ask_model(question: str) -> dict:
             else:
                 result = TOOL_FUNCS[func_name](**func_args)
 
-            extra_messages.append(response)
             f.write(json.dumps({
                 "call": call_id,
                 "name": func_name,
@@ -121,17 +122,19 @@ def ask_model(question: str) -> dict:
 
     f.close()
 
-    final_response = complete_with_tool_calls(
-        SYSTEM_PROMPT,
-        user_prompt,
-        extra_messages=extra_messages,
-        tools=None,
-    )
-
-    if final_response.tool_calls:
-        reply = final_response.content or "NOT_IN_SOURCE"
+    if not response.tool_calls:
+        reply = response.content
     else:
-        reply = final_response.content
+        try:
+            final_response = complete_with_tool_calls(
+                SYSTEM_PROMPT,
+                user_prompt,
+                extra_messages=extra_messages,
+                tools=None,
+            )
+            reply = final_response.content or "NOT_IN_SOURCE"
+        except Exception as e:
+            reply = f"STOPPED: model tried to call a tool after the cap ({e})"
 
     return {
         "reply": reply,
