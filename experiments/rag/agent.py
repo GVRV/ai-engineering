@@ -101,6 +101,7 @@ def ask_model(question: str) -> dict:
             else:
                 result = TOOL_FUNCS[func_name](**func_args)
 
+            extra_messages.append(response)
             f.write(json.dumps({
                 "call": call_id,
                 "name": func_name,
@@ -127,8 +128,13 @@ def ask_model(question: str) -> dict:
         tools=None,
     )
 
+    if final_response.tool_calls:
+        reply = final_response.content or "NOT_IN_SOURCE"
+    else:
+        reply = final_response.content
+
     return {
-        "reply": response.content,
+        "reply": reply,
         "paste": extra_messages,
     }
 
