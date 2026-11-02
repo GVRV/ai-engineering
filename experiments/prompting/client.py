@@ -9,6 +9,24 @@ client = OpenAI(
     base_url="https://api.groq.com/openai/v1",
 )
 
+def complete_with_tool_calls(system: str, user: str, extra_messages=None, tools=None) -> str:
+    messages=[
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ]
+
+    if extra_messages:
+        messages += extra_messages
+
+    resp = client.chat.completions.create(
+        model="openai/gpt-oss-20b",  # if this id 404s, print client.models.list() and pick a chat model
+        messages=messages,
+        temperature=0,
+        tools=tools,
+    )
+    return resp.choices[0].message
+
+
 def complete(system: str, user: str) -> str:
     resp = client.chat.completions.create(
         model="openai/gpt-oss-20b",  # if this id 404s, print client.models.list() and pick a chat model
