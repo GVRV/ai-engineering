@@ -45,7 +45,15 @@ def retrieve(query: str = "") -> str:
     return paste_context
 
 # Prompting stuff
-SYSTEM_PROMPT = """You may call retrieve to look up facts. Answer only from paragraphs the tool returned. If they do not say, reply NOT_IN_SOURCE. Do not use outside knowledge to derive any facts, use multiple successive tool calls, if needed to determine your answer.
+# SYSTEM_PROMPT = """You may call retrieve to look up facts. Answer only from paragraphs the tool returned. If they do not say, reply NOT_IN_SOURCE. Do not use outside knowledge to derive any facts, use multiple successive tool calls, if needed to determine your answer.
+# """
+SYSTEM_PROMPT = """You may call retrieve to look up facts. You may call it more than once.
+You do not know which stadium, which year, or which team is involved.
+Do not put a fact like a stadium name, a year, or a team name in a query unless a paragraph
+the tool already returned contains that name.
+The first query must only rephrase the user question to retrieve information and then you can use the retrieved information to craft better queries to search for more information. Do not add a proper noun
+the user did not write.
+Answer only from paragraphs the tool returned. If they do not say, reply NOT_IN_SOURCE.
 """
 
 def get_user_prompt(question):
