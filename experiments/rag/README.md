@@ -109,4 +109,16 @@ Top Cosine Score: 0.6006655693054199
 - The wrong page still generated the correct answer from the model because the model used its real world knowledge. This is the failure mode we need to focus on and correct.
 - The hand-made photosynthesis files were crafted for an even simpler RAG experiment. You can read about it in `experiments/retrieval/README.md`. Both experiments are separate, there happen to be some similarities like the embedding model used, but the numbers are not to be confused to be same across both experiments.
 
-#### Caveats
+## Eval Harness
+
+We have prepared an eval harness which can be run to automatically determine how many questions get answered by the model, how many tool calls were used to determine the reply, which was the query used in the first tool call and whether the tool calling was forcefully stopped (after 3 calls). The reply, if generated, is then independently judged by another model as to whether it is grounded or not. The `runs/audit20.jsonl` file contains a hand selection of 20 questions, but you can use the same format to pass it any arbitrary questions for evaluation.
+
+```
+> python eval_loop.py runs/audit20.jsonl
+Total questions: 20
+Total stopped: 2
+Total judged YES: 17
+Total judged NO: 1
+```
+
+A more detailed artefact file is generated as part of this eval generation which contains all of the information at `/tmp/auditrun.jsonl`.
