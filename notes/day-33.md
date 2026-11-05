@@ -8,8 +8,8 @@ If I change the prompt tomorrow, I run this command again and diff the numbers. 
 
 Total questions: 20
 Total stopped: 3
-Total judged YES: 14
-Total judged NO: 3
+Total judged YES: 13
+Total judged NO: 4
 
 By having a look manually at the questions and first queries, it seems like none of the first queries used a proper noun which was not available in the question. Below are all the questions printed on one line followed by the first query.
 

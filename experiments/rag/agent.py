@@ -5,6 +5,7 @@ from pathlib import Path
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import json
+from transformers import pipeline
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from prompting.client import complete_with_tool_calls
@@ -21,6 +22,12 @@ gold_ids = [index[row["context"]] for row in ds]
 model = SentenceTransformer("all-MiniLM-L6-v2")
 # Shape (n_contexts, n_embeddings)
 doc = model.encode(contexts, normalize_embeddings=True, show_progress_bar=True)
+
+# Classifier
+clf = pipeline(
+    "text-classification",
+    model="GVRV/ag_news",
+)
 
 def retrieve(query: str = "") -> str:
     # rank against the same contexts as retrieve_squad.py
@@ -44,10 +51,14 @@ def retrieve(query: str = "") -> str:
 
     return paste_context
 
+def classify(headline: str) -> str:
+    return clf(headline)[0]["label"]
+
 # Prompting stuff
 # SYSTEM_PROMPT = """You may call retrieve to look up facts. Answer only from paragraphs the tool returned. If they do not say, reply NOT_IN_SOURCE. Do not use outside knowledge to derive any facts, use multiple successive tool calls, if needed to determine your answer.
 # """
-SYSTEM_PROMPT = """You may call retrieve to look up facts. You may call it more than once.
+SYSTEM_PROMPT = """You have two tools. retrieve searches Wikipedia paragraphs. classify labels a news headline. Pick the one the question needs.
+You may call retrieve to look up facts. You may call it more than once.
 You do not know which stadium, which year, or which team is involved.
 Do not put a fact like a stadium name, a year, or a team name in a query unless a paragraph
 the tool already returned contains that name.
@@ -61,23 +72,40 @@ def get_user_prompt(question):
 {question}
 """
 
-TOOLS = [{
-    "type": "function",
-    "function": {
-        "name": "retrieve",
-        "description": "Search the Wikipedia paragraph corpus. Returns the single most similar paragraph.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "query": {"type": "string", "description": "What to look up."}
+TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "retrieve",
+            "description": "Search the Wikipedia paragraph corpus. Returns the single most similar paragraph.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "What to look up."}
+                },
+                "required": ["query"],
             },
-            "required": ["query"],
         },
     },
-}]
+    {
+        "type": "function",
+        "function": {
+            "name": "classify",
+            "description": "Label a news headline as World, Sports, Business, or Sci/Tech. Use this for category questions, not for factual lookup.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "headline": {"type": "string", "description": "The headline to classify."}
+                },
+                "required": ["headline"],
+            },
+        },
+    }
+]
 
 TOOL_FUNCS = {
     "retrieve": retrieve,
+    "classify": classify,
 }
 
 def ask_model(question: str) -> dict:
