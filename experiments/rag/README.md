@@ -116,9 +116,9 @@ We have prepared an eval harness which can be run to automatically determine how
 ```
 > python eval_loop.py runs/audit20.jsonl
 Total questions: 20
-Total stopped: 2
-Total judged YES: 17
-Total judged NO: 1
+Total stopped: 3
+Total judged YES: 13
+Total judged NO: 4
 ```
 
-A more detailed artefact file is generated as part of this eval generation which contains all of the information at `/tmp/auditrun.jsonl`.
+A more detailed artefact file is generated as part of this eval generation which contains all of the information at `runs/eval_day33.jsonl`.

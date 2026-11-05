@@ -39,7 +39,10 @@ def get_first_query(messages):
 
 def calculate_grounding_judge(reply_data):
     reply = reply_data["reply"]
-    paste_context = reply_data["paste"][-1]["content"]
+    paste_context = ""
+    for m in reply_data["paste"]:
+        if "content" in m:
+            paste_context += m["content"]
     judgement = judge_reply_grounding(paste_context, reply)
     return judgement.startswith("YES;")
 
@@ -62,7 +65,7 @@ def main():
         return
 
     data = load_data(file_path)
-    f = open('/tmp/auditrun.jsonl', 'w')
+    f = open('runs/eval_day33.jsonl', 'w')
 
     for d in data:
         reply_data = ask_model(d['question'])
