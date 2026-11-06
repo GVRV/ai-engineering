@@ -8,7 +8,7 @@ import json
 from transformers import pipeline
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
-from prompting.client import complete_with_tool_calls
+from prompting.client import complete_with_tool_calls, get_usage, clear_usage
 
 # Load the dataset
 ds = load_dataset("rajpurkar/squad", split="validation")
@@ -109,6 +109,7 @@ TOOL_FUNCS = {
 }
 
 def ask_model(question: str) -> dict:
+    clear_usage()
     extra_messages = []
     f = open('/tmp/agent.jsonl', 'w')
 
@@ -175,6 +176,7 @@ def ask_model(question: str) -> dict:
     return {
         "reply": reply,
         "paste": extra_messages,
+        "usage": get_usage(),
     }
 
 def main():

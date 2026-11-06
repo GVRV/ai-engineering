@@ -9,6 +9,26 @@ client = OpenAI(
     base_url="https://api.groq.com/openai/v1",
 )
 
+USAGE = {
+    'completion_tokens': 0,
+    'prompt_tokens': 0,
+    'total_tokens': 0,
+}
+
+def update_usage(usage):
+    USAGE['completion_tokens'] += usage.completion_tokens
+    USAGE['prompt_tokens'] += usage.prompt_tokens
+    USAGE['total_tokens'] += usage.total_tokens
+
+def get_usage():
+    return USAGE.copy()
+
+def clear_usage():
+    USAGE['completion_tokens'] = 0
+    USAGE['prompt_tokens'] = 0
+    USAGE['total_tokens'] = 0
+
+
 def complete_with_tool_calls(system: str, user: str, extra_messages=None, tools=None) -> str:
     messages=[
         {"role": "system", "content": system},
@@ -24,6 +44,7 @@ def complete_with_tool_calls(system: str, user: str, extra_messages=None, tools=
         temperature=0,
         tools=tools,
     )
+    update_usage(resp.usage)
     return resp.choices[0].message
 
 
@@ -36,4 +57,5 @@ def complete(system: str, user: str) -> str:
         ],
         temperature=0,
     )
+    update_usage(resp.usage)
     return resp.choices[0].message.content

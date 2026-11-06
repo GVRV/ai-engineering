@@ -94,7 +94,7 @@ def main():
         return
 
     data = load_data(file_path)
-    f = open('runs/eval_day34.jsonl', 'w')
+    f = open('runs/eval_day35.jsonl', 'w')
 
     for d in data:
         reply_data = ask_model(d['question'])
@@ -104,6 +104,7 @@ def main():
         made_correct_tool_calls = assert_tool_calls(tool_calls, expected_tool_call)
 
         d["reply"] = reply_data["reply"]
+        d["usage"] = reply_data["usage"]
 
         d["calls"] = calculate_calls(reply_data["paste"])
         d["tool_calls"] = tool_calls
