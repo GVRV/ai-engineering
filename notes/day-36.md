@@ -15,7 +15,7 @@ $ curl -s localhost:8000/health
 $ curl -s -X POST localhost:8000/ask \
     -H 'content-type: application/json' \
     -d '{"question": "How high is the highest point in Warsaw?"}'
-{"reply":"The highest point in Warsaw is Szczęśliwice hill, which reaches **138 metres (about 453 feet)** above sea level.","tool_calls":1,"judge":true,"stopped":false}
+{"reply":"The highest point in Warsaw is Szczęśliwice hill, which reaches about **138 metres** (452.8 ft) above sea level.","tool_calls":["retrieve"],"judge":true,"stopped":false}
 ```
 
 # Notes

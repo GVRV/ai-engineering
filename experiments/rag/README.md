@@ -125,6 +125,12 @@ A more detailed artefact file is generated as part of this eval generation which
 
 ## Server
 
+This server abstracts away making requests to Groq and using our fine-tuned `ag_news` model to reply to user questions.
+
+- Classifier `GVRV/ag_news` is finetuned for a 0.9441 accuracy on the test split
+- Retrieval `SQuAD validation, gold-id` has a hit@1 of 0.625 and hit@5 of 0.864
+- Agent routing (10 questions): 10/10 using an automated eval harness
+
 ### Start locally
 
 To start the server locally in development mode, first install `FastAPI` using:
@@ -154,7 +160,7 @@ Then you can make a POST request to the `/ask` endpoint to get the server to mak
 $ curl -s -X POST localhost:8000/ask \
     -H 'content-type: application/json' \
     -d '{"question": "How high is the highest point in Warsaw?"}'
-{"reply":"The highest point in Warsaw is Szczęśliwice hill, which reaches **138 metres (about 453 feet)** above sea level.","tool_calls":1,"judge":true,"stopped":false}
+{"reply":"The highest point in Warsaw is Szczęśliwice hill, which reaches about **138 metres** (452.8 ft) above sea level.","tool_calls":["retrieve"],"judge":true,"stopped":false}
 ```
 
 Please note: This is a development server not intended for production usage. It doesn't handle any auth, queues, etc for optimised production environments.
