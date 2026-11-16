@@ -54,6 +54,19 @@ def print_stats(data):
     print("Total judged NO:", len([d for d in data if d["judge"] == False]))
 
 
+def process_data(d, reply_data):
+    d["stopped"] = reply_data["reply"].startswith("STOPPED: model tried to call a tool after the cap")
+    if d["stopped"]:
+        d["reply"] = None
+        d["judge"] = None
+    else:
+        d["reply"] = reply_data["reply"]
+        d["judge"] = calculate_grounding_judge(reply_data)
+
+    d["calls"] = calculate_calls(reply_data["paste"])
+    d["first_query"] = get_first_query(reply_data["paste"])
+
+
 def main():
     try:
         file_path = sys.argv[1]
@@ -69,18 +82,7 @@ def main():
 
     for d in data:
         reply_data = ask_model(d['question'])
-
-        d["stopped"] = reply_data["reply"].startswith("STOPPED: model tried to call a tool after the cap")
-        if d["stopped"]:
-            d["reply"] = None
-            d["judge"] = None
-        else:
-            d["reply"] = reply_data["reply"]
-            d["judge"] = calculate_grounding_judge(reply_data)
-
-        d["calls"] = calculate_calls(reply_data["paste"])
-        d["first_query"] = get_first_query(reply_data["paste"])
-
+        process_data(d, reply_data)
         f.write(json.dumps(d))
         f.write("\n")
 

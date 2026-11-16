@@ -122,3 +122,39 @@ Total judged NO: 4
 ```
 
 A more detailed artefact file is generated as part of this eval generation which contains all of the information at `runs/eval_day33.jsonl`.
+
+## Server
+
+### Start locally
+
+To start the server locally in development mode, first install `FastAPI` using:
+
+```
+$ uv add "fastapi[standard]"
+```
+
+Then cd into the `experiments/rag` directory and start the server using:
+
+```
+$ uv run fastapi dev --entrypoint server:app
+```
+
+### Example Curl Response
+
+The server has a health check endpoint which returns a valid response once the server has started up after loading the models once.
+
+```
+$ curl -s localhost:8000/health
+{"ok":true}
+```
+
+Then you can make a POST request to the `/ask` endpoint to get the server to make possibly multiple calls to Groq under the hook and return a valid response:
+
+```
+$ curl -s -X POST localhost:8000/ask \
+    -H 'content-type: application/json' \
+    -d '{"question": "How high is the highest point in Warsaw?"}'
+{"reply":"The highest point in Warsaw is Szczęśliwice hill, which reaches **138 metres (about 453 feet)** above sea level.","tool_calls":1,"judge":true,"stopped":false}
+```
+
+Please note: This is a development server not intended for production usage. It doesn't handle any auth, queues, etc for optimised production environments.
