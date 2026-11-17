@@ -9,7 +9,7 @@ LoRA (Low-Rank Adaptation) is a method to improve the performance of general bas
 - Prompting only: specific task is close to what the base model can do, good prompt required with examples.
 - Do not LoRA when the base model architecture is unsuitable for the task, or we need to change the embedding table or tokenizer.
 
-Considering we already fine-tuned the AGNews model to improve the loss, using LoRA seems like a good second experiment to see if we can squeeze better performance from the model.
+Considering we already fine-tuned the AGNews model to improve the loss, we can now compare using a much less resource intensive training using LoRA as a good second experiment to see if we can get comparable loss with much more scarce resources (then we can make a decision depending on the specific task whether full fine tuning serves the purpose better or we can get by with a LoRA train)
 
 # LoRA Trainable Parameters
 
@@ -23,7 +23,7 @@ Compared to the fine-tuned model (parameters = 67M, accuracy = 0.9441), the accu
 
 # Notes
 
-Rank, alpha, targets: 8, 16, 768 + 768
+Rank, alpha, targets: 8, 16, q_lin & v_lin
 Trainable params: 741,124
 Test accuracy, full: 0.9441
 Test accuracy, LoRA: 0.9026
