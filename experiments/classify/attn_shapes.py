@@ -36,10 +36,11 @@ hidden_size = model.config.hidden_size # Distilbert has 768 dimensions
 num_attn_heads = model.config.num_attention_heads # Distilbert has 12 heads
 head_size = hidden_size // num_attn_heads # 64 dimensions
 
+INSPECT_HEAD_NUMBER = 5
 # first head only: 64 of the 768 dims
 # DistilBERT has 12 heads, 768 / 12 = 64
-q = Q[0, :, :head_size]   # (seq, 64)
-k = K[0, :, :head_size]
+q = Q[0, :, head_size*(INSPECT_HEAD_NUMBER-1):head_size*INSPECT_HEAD_NUMBER]   # (seq, 64)
+k = K[0, :, head_size*(INSPECT_HEAD_NUMBER-1):head_size*INSPECT_HEAD_NUMBER]
 scale = head_size ** 0.5  # As the dot product will increase large numbers to even larger values, we scale back before using softmax
 scores = q @ k.T / scale          # (seq, seq)
 weights = torch.softmax(scores, dim=-1)
@@ -51,6 +52,6 @@ print(f"attention from '{tokens[i]}':")
 for j, w in enumerate(weights[i].tolist()):
     print(f"  {w:0.3f}  {tokens[j]}")
 
-v = V[0, :, :head_size]                 # (seq, 64), first head
+v = V[0, :, head_size*(INSPECT_HEAD_NUMBER-1):head_size*INSPECT_HEAD_NUMBER]                 # (seq, 64), first head
 mixed = weights @ v              # (seq, seq) @ (seq, 64) = (seq, 64)
 print("mixed shape:", tuple(mixed.shape))

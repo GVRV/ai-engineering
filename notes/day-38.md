@@ -53,6 +53,7 @@ attention from 'fears':
   0.011  ##gul
   0.025  .
   0.043  [SEP]
+Explanation: Nothing dominates. Layer 0 often looks like this. Later layers get sharper. Flat attention is a real result, and it means this particular head, on this layer, is not yet doing a clean “verb looks for subject.” The mechanism is working. The specialization is weak here.
 
 What q_lin adaptation changes: This changes what each token is looking for (i.e. during LoRA we can change the query to behave from "hey, i'm a verb looking for subject" to "hey, I'm a verb looking for an adverb")
 What v_lin adaptation changes: This changes what gets mixed into the result for the feed forward layers (i.e. considering you opened this box, now what gets mixed is different than before so what will feed forward might be different values).
